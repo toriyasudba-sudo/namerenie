@@ -324,18 +324,6 @@ body::before{
   <section class="screen wheel-input" data-screen="wheel-input">
     <div class="s-head">
       <h2>Колесо</h2>
-      <p>Загрузите фото вашего колеса — оценки заполнятся сами. Или введите вручную.</p>
-    </div>
-    <div class="upload-zone" id="uploadZone">
-      <input type="file" accept="image/*" id="uploadInput" aria-label="Загрузить изображение колеса"/>
-      <div class="upload-icon">
-        <svg viewBox="0 0 24 24"><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/><polyline points="8 11 12 7 16 11"/><line x1="12" y1="7" x2="12" y2="17"/></svg>
-      </div>
-      <div class="upload-text">
-        <div class="ut-main">Загрузить фото результата диагностики</div>
-        <div class="ut-sub">Оценки считываются автоматически · jpg, png, webp</div>
-      </div>
-      <div class="upload-status" id="uploadStatus"></div>
     </div>
     <div class="wheel-input-grid">
       <div class="wheel-preview">
@@ -439,9 +427,8 @@ body::before{
    ===================================================== */
 const CONFIG = {
   apiKey: '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',        
-  endpoint: 'https://api.x.ai/v1/chat/completions',
-  visionModel: 'grok-2-vision-1212',
-  chatModel: 'grok-2-1212',
+  endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+  chatModel: 'llama-3.1-70b-versatile',
   temperature: 0.75,
   maxTokens: 500,
   systemPrompt:

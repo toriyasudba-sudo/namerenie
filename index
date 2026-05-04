@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>НАМЕРЕНИЕ — БЧДТ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#faf8f3;
+  --bg-2:#f5f0e6;
+  --bg-3:#ede7d8;
+  --paper:#1c1712;
+  --paper-dim:#4a4030;
+  --paper-mute:#8a7a62;
+  --paper-faint:#b8a98c;
+  --line:#ddd0b8;
+  --line-soft:#ece6d8;
+  --accent:#8b2020;
+  --accent-dim:#c47060;
+  --gold:#7a5c14;
+  --gold-mid:#a07828;
+  --gold-warm:#c9a04a;
+  --gold-soft:#f4edda;
+  --serif:'Bodoni Moda','Times New Roman',serif;
+  --sans:'Manrope',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  background:var(--bg);color:var(--paper);
+  font-family:var(--sans);font-weight:300;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100dvh;
+}
+body{
+  background:radial-gradient(ellipse at 50% 0%,#f0e8d0 0%,var(--bg) 60%),var(--bg);
+  position:relative;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  opacity:.018;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+::selection{background:var(--gold-warm);color:#fff}
+.frame{position:fixed;inset:18px;border:1px solid var(--line);pointer-events:none;z-index:5}
+.frame::before,.frame::after{content:"";position:absolute;width:16px;height:16px;border:1px solid var(--gold-warm)}
+.frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.topbar{
+  position:fixed;top:30px;left:0;right:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 44px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.18em;color:var(--paper-mute);text-transform:uppercase;
+}
+.topbar .mark{display:flex;align-items:center;gap:10px}
+.topbar .mark .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold-warm);box-shadow:0 0 10px rgba(201,160,74,.4);
+  animation:breathe 3s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+.icon-btn{
+  appearance:none;background:transparent;border:1px solid var(--line);
+  color:var(--paper-mute);font-family:var(--mono);font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;padding:8px 14px;
+  cursor:pointer;transition:all .25s var(--ease);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.icon-btn:hover{color:var(--paper);border-color:var(--paper-mute);background:var(--bg-3)}
+.icon-btn svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.4}
+.stepper{
+  position:fixed;top:78px;left:0;right:0;z-index:9;
+  display:flex;justify-content:center;gap:28px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--paper-faint);
+}
+.stepper span{display:flex;align-items:center;gap:10px;cursor:default;transition:color .3s var(--ease)}
+.stepper span::after{content:"";width:18px;height:1px;background:var(--line)}
+.stepper span:last-child::after{display:none}
+.stepper span.done{color:var(--gold-mid)}
+.stepper span.current{color:var(--paper)}
+.stage{position:relative;z-index:3;min-height:100dvh;display:flex;flex-direction:column}
+.screen{
+  flex:1;display:none;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:140px 32px 60px;width:100%;max-width:1200px;margin:0 auto;
+}
+.screen.is-active{display:flex;animation:fadeIn .55s var(--ease-out) both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-meta{
+  font-family:var(--mono);font-size:11px;letter-spacing:.3em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:24px;text-align:center;
+}
+.section-meta::before,.section-meta::after{content:"—";margin:0 14px;color:var(--gold-warm);opacity:.6}
+.btn{
+  appearance:none;background:transparent;color:var(--paper);
+  border:1px solid var(--paper-dim);padding:18px 44px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  cursor:pointer;transition:all .35s var(--ease);
+  position:relative;overflow:hidden;isolation:isolate;white-space:nowrap;
+}
+.btn::before{
+  content:"";position:absolute;inset:0;background:var(--paper);
+  transform:translateX(-101%);transition:transform .5s var(--ease);z-index:-1;
+}
+.btn:hover:not(:disabled){color:var(--bg);border-color:var(--paper)}
+.btn:hover:not(:disabled)::before{transform:translateX(0)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn--ghost{border-color:var(--line);color:var(--paper-mute);padding:14px 28px}
+.btn--ghost::before{display:none}
+.btn--ghost:hover{color:var(--paper);border-color:var(--paper-mute);background:var(--bg-3)}
+.btn--gold{border-color:var(--gold-warm);color:var(--gold)}
+.btn--gold::before{background:var(--gold)}
+.btn--gold:hover:not(:disabled){color:#fff;border-color:var(--gold)}
+.cover{text-align:center}
+.cover h1{
+  font-family:var(--serif);font-weight:400;font-style:italic;
+  font-size:clamp(64px,12vw,168px);line-height:.95;letter-spacing:-.02em;
+  margin-bottom:32px;color:var(--paper);
+  opacity:0;animation:rise 1.1s var(--ease-out) .2s forwards;
+}
+.cover .lead{
+  font-family:var(--serif);font-size:clamp(17px,1.5vw,21px);line-height:1.6;
+  color:var(--paper-dim);max-width:560px;margin:0 auto 56px;
+  opacity:0;animation:rise 1s var(--ease-out) .45s forwards;
+}
+.cover .lead em{font-style:italic;color:var(--gold)}
+.cover .cta{opacity:0;animation:rise 1s var(--ease-out) .7s forwards}
+.cover-foot{
+  margin-top:48px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.3em;color:var(--paper-faint);text-transform:uppercase;
+  opacity:0;animation:rise 1s var(--ease-out) .9s forwards;
+}
+.s-head{text-align:center;margin-bottom:48px;width:100%}
+.s-head h2{
+  font-family:var(--serif);font-weight:400;font-style:italic;
+  font-size:clamp(38px,5.5vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:16px;
+}
+.s-head p{font-family:var(--serif);font-size:17px;line-height:1.5;color:var(--paper-dim);max-width:520px;margin:0 auto;font-style:italic}
+.wheel-input{width:100%}
+.wheel-input-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:64px;align-items:center;width:100%;max-width:980px;margin:0 auto 32px}
+.wheel-preview{position:relative;aspect-ratio:1}
+.wheel-preview svg{width:100%;height:auto;overflow:visible}
+.score-inputs{display:flex;flex-direction:column}
+.score-row{
+  display:grid;grid-template-columns:24px 1fr 60px;
+  gap:18px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line-soft);
+}
+.score-row:last-child{border-bottom:none}
+.score-row .ix{font-family:var(--mono);font-size:10px;color:var(--paper-faint);letter-spacing:.18em}
+.score-row .name{font-family:var(--serif);font-size:18px;color:var(--paper-dim);font-style:italic}
+.score-row input[type=number]{
+  width:60px;background:var(--bg-2);color:var(--paper);
+  border:1px solid var(--line);padding:8px 10px;
+  font-family:var(--mono);font-size:14px;text-align:center;outline:none;
+  transition:border-color .2s var(--ease);-moz-appearance:textfield;
+}
+.score-row input[type=number]::-webkit-outer-spin-button,
+.score-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.score-row input[type=number]:focus{border-color:var(--gold-warm)}
+.score-row.crit .name{color:var(--paper)}
+.score-row.crit input[type=number]{color:var(--accent);border-color:var(--accent-dim)}
+.upload-zone{
+  width:100%;max-width:980px;margin:0 auto 28px;
+  border:1.5px dashed var(--line);padding:24px 32px;
+  background:var(--bg-2);display:flex;align-items:center;gap:24px;
+  cursor:pointer;transition:all .3s var(--ease);position:relative;
+}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--gold-warm);background:var(--gold-soft)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{
+  flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--gold-warm);color:var(--gold);
+}
+.upload-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5}
+.upload-text{flex:1}
+.upload-text .ut-main{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--paper-dim);margin-bottom:4px}
+.upload-text .ut-sub{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--paper-faint);text-transform:uppercase}
+.upload-status{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;flex:none}
+.upload-status.err{color:var(--accent)}
+.upload-status.analyzing{display:flex;align-items:center;gap:8px}
+.upload-status.analyzing::after{
+  content:"";display:inline-block;width:18px;height:1px;background:var(--gold);
+  animation:pulseLine 1.2s ease-in-out infinite;transform-origin:left center;
+}
+@keyframes pulseLine{0%,100%{transform:scaleX(.2);opacity:.4}50%{transform:scaleX(1);opacity:1}}
+.cards-input{width:100%;max-width:780px;margin:0 auto}
+.card-block{
+  border-bottom:1px solid var(--line-soft);padding:26px 0;
+  display:grid;grid-template-columns:140px 1fr;gap:32px;align-items:start;
+}
+.card-block:last-child{border-bottom:none}
+.card-block .lhs{display:flex;flex-direction:column;gap:6px}
+.card-block .lhs .ix{font-family:var(--mono);font-size:9px;color:var(--paper-faint);letter-spacing:.3em}
+.card-block .lhs .sphere-name{font-family:var(--serif);font-size:22px;font-style:italic;color:var(--paper)}
+.card-block .lhs .score{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.18em}
+.card-block .lhs .score.crit{color:var(--accent)}
+.card-block .rhs{display:flex;flex-direction:column;gap:10px}
+.field-input{
+  background:transparent;border:none;border-bottom:1px solid var(--line);
+  padding:8px 0;font-family:var(--serif);font-size:18px;font-style:italic;
+  color:var(--paper);outline:none;width:100%;
+  transition:border-color .25s var(--ease);resize:none;
+}
+.field-input:focus{border-color:var(--gold-warm)}
+.field-input::placeholder{color:var(--paper-faint);font-style:italic}
+.field-input.field-textarea{min-height:56px;font-size:15px;line-height:1.5;font-family:var(--sans);font-style:normal;color:var(--paper-dim);padding-top:6px}
+.field-label{font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--paper-faint);text-transform:uppercase;margin-top:2px}
+@media(max-width:680px){
+  .card-block{grid-template-columns:1fr;gap:14px;padding:22px 0}
+  .wheel-input-grid{grid-template-columns:1fr;gap:28px}
+}
+.dialogue{width:100%;max-width:1080px;height:calc(100dvh - 200px);min-height:540px;padding-top:0!important;padding-bottom:0!important;margin-top:120px}
+.dlg-wrap{display:grid;grid-template-columns:240px 1fr;gap:48px;width:100%;height:100%}
+.dlg-aside{border-right:1px solid var(--line);padding-right:28px;display:flex;flex-direction:column;gap:24px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.dlg-aside .label{font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--paper-mute);text-transform:uppercase;margin-bottom:8px}
+.dlg-aside .mini-wheel{width:100%;aspect-ratio:1}
+.dlg-aside .cards-list{display:flex;flex-direction:column;gap:14px}
+.dlg-aside .card-pill{border-left:2px solid var(--gold-warm);padding:4px 0 4px 12px}
+.dlg-aside .card-pill .sphere{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--paper-mute);text-transform:uppercase;margin-bottom:2px}
+.dlg-aside .card-pill .name{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--paper-dim);line-height:1.3}
+.dlg-main{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:26px;padding:8px 12px 24px 0;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.messages::-webkit-scrollbar{width:3px}
+.messages::-webkit-scrollbar-thumb{background:var(--line)}
+.msg{max-width:92%;animation:msgIn .5s var(--ease-out) both}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.assistant{font-family:var(--serif);font-style:italic;font-size:21px;line-height:1.5;color:var(--paper);border-left:2px solid var(--gold-warm);padding-left:20px}
+.msg.assistant .who{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:10px}
+.msg.user{align-self:flex-end;font-family:var(--sans);font-size:15px;line-height:1.5;color:var(--paper-dim);background:var(--bg-3);border:1px solid var(--line);padding:14px 20px;max-width:78%}
+.msg.system{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;text-align:center;border:1px solid var(--accent-dim);padding:14px;background:rgba(139,32,32,.05)}
+.thinking{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--paper-mute);text-transform:uppercase;padding-left:22px;border-left:2px solid var(--gold-warm);height:22px}
+.thinking .pulse{width:14px;height:1px;background:var(--gold);animation:pulseLine 1.4s ease-in-out infinite;transform-origin:left center}
+.input-bar{border-top:1px solid var(--line);padding-top:20px;display:flex;gap:16px;align-items:flex-end}
+.input-bar textarea{flex:1;background:transparent;border:none;color:var(--paper);padding:8px 0;font-family:var(--serif);font-size:18px;font-style:italic;outline:none;resize:none;line-height:1.4;max-height:120px;overflow-y:auto}
+.input-bar textarea::placeholder{color:var(--paper-faint);font-style:italic}
+.send-btn{appearance:none;background:transparent;border:1px solid var(--paper-mute);color:var(--paper);font-family:var(--mono);font-size:10px;letter-spacing:.3em;padding:12px 18px;cursor:pointer;transition:all .25s var(--ease);text-transform:uppercase;flex:none}
+.send-btn:hover:not(:disabled){border-color:var(--paper);background:var(--paper);color:var(--bg)}
+.send-btn:disabled{opacity:.3;cursor:not-allowed}
+@media(max-width:820px){
+  .dialogue{height:auto;min-height:auto;margin-top:140px}
+  .dlg-wrap{grid-template-columns:1fr;gap:32px}
+  .dlg-aside{border-right:none;border-bottom:1px solid var(--line);padding:0 0 28px}
+  .dlg-aside .mini-wheel{max-width:220px;margin:0 auto}
+  .dlg-main{height:auto;min-height:60vh}
+  .messages{max-height:none;min-height:300px}
+}
+.final{width:100%}
+.intention-card{
+  position:relative;width:100%;max-width:680px;margin:0 auto;
+  padding:64px 48px;border:1px solid var(--gold-warm);
+  background:radial-gradient(ellipse at 50% 0%,rgba(201,160,74,.09) 0%,transparent 65%),var(--bg-2);
+  text-align:center;box-shadow:0 8px 48px rgba(122,92,20,.12);
+  animation:rise 1s var(--ease-out) .2s both;
+}
+.intention-card::before,.intention-card::after{content:"";position:absolute;width:24px;height:24px;border:1px solid var(--gold-warm)}
+.intention-card::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.intention-card::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.intention-card .meta{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:32px}
+.intention-card .text{font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.5vw,36px);line-height:1.35;color:var(--paper);margin-bottom:44px;letter-spacing:-.005em}
+.intention-card .mini-wheel-wrap{width:110px;margin:0 auto 32px}
+.intention-card .mini-wheel-wrap svg{width:100%;height:auto}
+.intention-card .stamp{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--paper-faint);text-transform:uppercase;border-top:1px solid var(--line);padding-top:22px;margin-top:28px}
+.final-actions{margin-top:44px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;animation:rise 1s var(--ease-out) .5s both}
+@media(max-width:760px){
+  .stepper{gap:14px;font-size:9px;letter-spacing:.2em;padding:0 16px;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+  .stepper::-webkit-scrollbar{display:none}
+  .stepper span::after{width:10px}
+  .stepper span{flex:none;white-space:nowrap}
+}
+@media(max-width:640px){
+  .topbar{padding:0 24px;top:24px;font-size:9px}
+  .topbar .mark span:not(.dot){display:none}
+  .topbar .mark::before{content:"БЧДТ";color:var(--paper-mute);font-family:var(--mono);letter-spacing:.18em}
+  .icon-btn{padding:8px 10px;gap:0;font-size:0}
+  .icon-btn svg{width:14px;height:14px}
+  .frame{inset:10px}
+  .stepper{top:62px}
+  .screen{padding:120px 18px 40px}
+  .intention-card{padding:40px 24px}
+  .upload-zone{flex-direction:column;gap:14px;text-align:center}
+}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="frame" aria-hidden="true"></div>
+<div class="topbar">
+  <div class="mark">
+    <span class="dot"></span>
+    <span>БЧДТ — Намерение</span>
+  </div>
+  <div class="actions">
+    <button class="icon-btn" id="resetBtn" aria-label="Начать заново">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>
+      <span>Сбросить</span>
+    </button>
+  </div>
+</div>
+<div class="stepper" id="stepper">
+  <span data-step="cover">I · Вход</span>
+  <span data-step="wheel-input">II · Колесо</span>
+  <span data-step="cards-input">III · Карты</span>
+  <span data-step="dialogue">IV · Голос</span>
+  <span data-step="final">V · Намерение</span>
+</div>
+<div class="stage">
+  <!-- I · COVER -->
+  <section class="screen cover is-active" data-screen="cover">
+    <div class="section-meta">Шаг второй</div>
+    <h1>Намерение</h1>
+    <p class="lead">
+      Колесо у вас уже есть. Карты — что выпали — тоже. Здесь вы превратите всё это в <em>одно ясное намерение</em>, которое можно держать в кармане.
+    </p>
+    <div class="cta"><button class="btn" id="beginBtn">Начать</button></div>
+    <p class="cover-foot">5–10 минут · Тишина · Без советов</p>
+  </section>
+
+  <!-- II · WHEEL INPUT -->
+  <section class="screen wheel-input" data-screen="wheel-input">
+    <div class="s-head">
+      <h2>Колесо</h2>
+      <p>Загрузите фото вашего колеса — оценки заполнятся сами. Или введите вручную.</p>
+    </div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" accept="image/*" id="uploadInput" aria-label="Загрузить изображение колеса"/>
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/><polyline points="8 11 12 7 16 11"/><line x1="12" y1="7" x2="12" y2="17"/></svg>
+      </div>
+      <div class="upload-text">
+        <div class="ut-main">Загрузить фото результата диагностики</div>
+        <div class="ut-sub">Оценки считываются автоматически · jpg, png, webp</div>
+      </div>
+      <div class="upload-status" id="uploadStatus"></div>
+    </div>
+    <div class="wheel-input-grid">
+      <div class="wheel-preview">
+        <svg id="previewWheel" viewBox="-135 -130 270 260">
+          <circle cx="0" cy="0" r="100" fill="none" stroke="var(--line)" stroke-width=".6" stroke-dasharray="1.5 3"/>
+          <g stroke="var(--line-soft)" stroke-width=".4" fill="none">
+            <circle cx="0" cy="0" r="20"/>
+            <circle cx="0" cy="0" r="40"/>
+            <circle cx="0" cy="0" r="60"/>
+            <circle cx="0" cy="0" r="80"/>
+          </g>
+          <g id="previewSpokes"></g>
+          <polygon id="previewPoly" fill="rgba(201,160,74,.15)" stroke="var(--gold-warm)" stroke-width="1.5" stroke-linejoin="miter" points="" style="filter:drop-shadow(0 0 6px rgba(201,160,74,.2))"/>
+          <g id="previewDots"></g>
+          <circle cx="0" cy="0" r="2" fill="var(--gold-warm)"/>
+          <g id="previewLabels"></g>
+        </svg>
+      </div>
+      <div class="score-inputs" id="scoreInputs"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:28px">
+      <button class="btn btn--ghost" id="backToCoverBtn">← Назад</button>
+      <button class="btn" id="toCardsBtn">К картам →</button>
+    </div>
+  </section>
+
+  <!-- III · CARDS INPUT -->
+  <section class="screen cards-input" data-screen="cards-input">
+    <div class="s-head">
+      <h2>Карты</h2>
+      <p>Если вы вытянули карту для какой-то сферы — впишите её. Можно оставить пустым.</p>
+    </div>
+    <div id="cardsGrid"></div>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:48px">
+      <button class="btn btn--ghost" id="backToWheelBtn">← К колесу</button>
+      <button class="btn" id="toDialogueBtn">К разговору →</button>
+    </div>
+  </section>
+
+  <!-- IV · DIALOGUE -->
+  <section class="screen dialogue" data-screen="dialogue">
+    <div class="dlg-wrap">
+      <aside class="dlg-aside">
+        <div>
+          <div class="label">Ваше колесо</div>
+          <svg class="mini-wheel" id="asideWheel" viewBox="-135 -130 270 260">
+            <circle cx="0" cy="0" r="100" fill="none" stroke="var(--line)" stroke-width=".6" stroke-dasharray="1.5 3"/>
+            <g id="asideSpokes"></g>
+            <polygon id="asidePoly" fill="rgba(201,160,74,.13)" stroke="var(--gold-warm)" stroke-width="1.5" points=""/>
+            <g id="asideDots"></g>
+            <circle cx="0" cy="0" r="2" fill="var(--gold-warm)"/>
+            <g id="asideLabels"></g>
+          </svg>
+        </div>
+        <div>
+          <div class="label">Карты</div>
+          <div class="cards-list" id="asideCards"></div>
+        </div>
+      </aside>
+      <div class="dlg-main">
+        <div class="messages" id="messages"></div>
+        <div class="input-bar">
+          <textarea id="msgInput" rows="1" placeholder="Напишите свой ответ…"></textarea>
+          <button class="send-btn" id="sendBtn">Сказать</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- V · FINAL -->
+  <section class="screen final" data-screen="final">
+    <div class="section-meta">Намерение</div>
+    <div class="intention-card" id="intentionCard">
+      <div class="meta">— твоё намерение —</div>
+      <div class="text" id="intentionText">…</div>
+      <div class="mini-wheel-wrap">
+        <svg id="finalWheel" viewBox="-135 -130 270 260">
+          <circle cx="0" cy="0" r="100" fill="none" stroke="var(--line)" stroke-width=".6" stroke-dasharray="1.5 3"/>
+          <g id="finalSpokes"></g>
+          <polygon id="finalPoly" fill="rgba(201,160,74,.2)" stroke="var(--gold-warm)" stroke-width="1.5" points=""/>
+          <g id="finalDots"></g>
+          <circle cx="0" cy="0" r="2" fill="var(--gold-warm)"/>
+        </svg>
+      </div>
+      <div class="stamp">
+        <span id="finalDate">DD.MM.YYYY</span>
+        <span>БЧДТ</span>
+      </div>
+    </div>
+    <div class="final-actions">
+      <button class="btn btn--ghost" id="backToDialogueBtn">← В разговор</button>
+      <button class="btn btn--gold" id="downloadBtn">Скачать как изображение</button>
+      <button class="btn btn--ghost" id="copyIntentionBtn">Скопировать текст</button>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =====================================================
+   КОНФИГ — вставьте ключ перед деплоем на GitHub
+   ===================================================== */
+const CONFIG = {
+  apiKey: '',           /* ← ВАШ КЛЮЧ xAI GROK ЗДЕСЬ */
+  endpoint: 'https://api.x.ai/v1/chat/completions',
+  visionModel: 'grok-2-vision-1212',
+  chatModel: 'grok-2-1212',
+  temperature: 0.75,
+  maxTokens: 500,
+  systemPrompt:
+`Ты — спокойный наставник в журнале БЧДТ. Не коуч, не мотиватор, не психолог.
+Ты помогаешь женщине услышать её настоящее намерение через её колесо баланса и карты, которые она вытянула.
+
+Жёсткие правила голоса:
+— Один вопрос за раз. Никаких списков.
+— Меньше слов, больше пространства. Каждая реплика короче, чем кажется нужным.
+— Не утешай. Не оценивай. Не предлагай решений.
+— Используй её слова, отзеркаливай их. Не интерпретируй за неё.
+— Никогда не пиши "ты молодец", "это нормально", "ты справишься" и подобные шаблоны.
+— Не говори за общий опыт ("многие женщины..."). Только про неё.
+— Не перечисляй сферы и не комментируй цифры обзорно. Иди в одну точку.
+— Не используй смайлы и эмодзи. Никогда.
+
+Структура разговора (не озвучивай её):
+1. Открой одним вопросом, исходя из её данных. Не приветствуй.
+2. Углубляйся через 2–4 уточняющих вопроса, держась её темы.
+3. Когда намерение прорисовалось — предложи формулировку через:
+   "Слышу так: <одно предложение>. Это твоё, или иначе?"
+4. После согласия — выдай финальный ответ, ОБЯЗАТЕЛЬНО включающий блок:
+   <intent>точная формулировка намерения</intent>
+   После этого блока больше ничего не пиши.
+
+Намерение должно быть:
+— в первом лице, настоящее время
+— конкретно и измеримо, без общих слов ("буду счастливее", "стану лучше" — запрещено)
+— одно предложение, до 18 слов
+— про действие или состояние, реально выбранное ею самой`
+};
+
+const SPHERES = [
+  { id:'health',     name:'Здоровье',   angle:-90 },
+  { id:'money',      name:'Деньги',     angle:-45 },
+  { id:'career',     name:'Реализация', angle:0   },
+  { id:'relations',  name:'Отношения',  angle:45  },
+  { id:'state',      name:'Состояние',  angle:90  },
+  { id:'discipline', name:'Дисциплина', angle:135 },
+  { id:'env',        name:'Среда',      angle:180 },
+  { id:'rest',       name:'Отдых',      angle:-135}
+];
+
+const STORAGE_KEY = 'bchdt-intention-v1';
+function makeDefaultState(){
+  const scores={},cards={};
+  SPHERES.forEach(s=>{scores[s.id]=5;cards[s.id]={name:'',impression:''};});
+  return{screen:'cover',scores,cards,messages:[],intention:'',sessionDate:new Date().toISOString()};
+}
+let state=makeDefaultState();
+function loadFromStorage(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)state={...makeDefaultState(),...JSON.parse(r)};}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function polar(a,r){const rad=a*Math.PI/180;return[Math.cos(rad)*r,Math.sin(rad)*r];}
+function fmtNum(n){if(Number.isInteger(n))return n;return Number(n).toFixed(1).replace(/\.0$/,'');}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function todayStr(){const d=new Date(),pad=n=>String(n).padStart(2,'0');return`${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;}
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Ошибка чтения файла'));r.readAsDataURL(file);});}
+
+const SCREENS=['cover','wheel-input','cards-input','dialogue','final'];
+function showScreen(name){
+  state.screen=name;
+  $$('.screen').forEach(s=>s.classList.toggle('is-active',s.dataset.screen===name));
+  const ix=SCREENS.indexOf(name);
+  $$('.stepper span').forEach((el,i)=>{el.classList.toggle('done',i<ix);el.classList.toggle('current',i===ix);});
+  window.scrollTo({top:0,behavior:'instant'});saveState();
+  if(name==='wheel-input')renderWheelInput();
+  if(name==='cards-input')renderCardsInput();
+  if(name==='dialogue')enterDialogue();
+  if(name==='final')renderFinal();
+}
+
+function renderWheelInto(ids,scores){
+  const SCALE=10;
+  const spokes=$('#'+ids.spokes),poly=$('#'+ids.poly),dots=$('#'+ids.dots),labels=ids.labels?$('#'+ids.labels):null;
+  if(spokes)spokes.innerHTML='';if(dots)dots.innerHTML='';if(labels)labels.innerHTML='';
+  const targets=SPHERES.map(s=>polar(s.angle,(scores[s.id]||0)*SCALE));
+  if(spokes)SPHERES.forEach(s=>{
+    const[x,y]=polar(s.angle,100);
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',0);ln.setAttribute('y1',0);ln.setAttribute('x2',x);ln.setAttribute('y2',y);
+    ln.setAttribute('stroke','var(--line)');ln.setAttribute('stroke-width','.5');ln.setAttribute('stroke-dasharray','1.5 2.5');
+    spokes.appendChild(ln);
+  });
+  if(poly)poly.setAttribute('points',targets.map(p=>p.join(',')).join(' '));
+  if(dots)SPHERES.forEach((s,i)=>{
+    const sc=scores[s.id]||0;
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',targets[i][0]);c.setAttribute('cy',targets[i][1]);
+    c.setAttribute('r',sc<4?2.5:2);c.setAttribute('fill',sc<4?'var(--accent)':'var(--gold)');
+    dots.appendChild(c);
+  });
+  if(labels)SPHERES.forEach(s=>{
+    const sc=scores[s.id]||0;
+    const[x,y]=polar(s.angle,118);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('font-family','JetBrains Mono, monospace');
+    const t1=document.createElementNS('http://www.w3.org/2000/svg','tspan');
+    t1.setAttribute('x',x);t1.setAttribute('dy','-0.2em');t1.setAttribute('font-size','7');t1.setAttribute('font-weight','500');
+    t1.setAttribute('fill',sc<4?'var(--accent)':'var(--paper)');t1.textContent=fmtNum(sc);t.appendChild(t1);
+    const t2=document.createElementNS('http://www.w3.org/2000/svg','tspan');
+    t2.setAttribute('x',x);t2.setAttribute('dy','1.5em');t2.setAttribute('font-size','4.2');t2.setAttribute('letter-spacing','.15em');
+    t2.setAttribute('fill','var(--paper-mute)');t2.textContent=s.name.toUpperCase();t.appendChild(t2);
+    labels.appendChild(t);
+  });
+}
+
+function renderWheelInput(){
+  const wrap=$('#scoreInputs');wrap.innerHTML='';
+  SPHERES.forEach((s,i)=>{
+    const v=state.scores[s.id]??5;
+    const row=document.createElement('div');row.className='score-row'+(v<4?' crit':'');
+    row.innerHTML=`<div class="ix">${String(i+1).padStart(2,'0')}</div><div class="name">${s.name}</div><input type="number" min="0" max="10" step="0.1" value="${v}" data-sphere="${s.id}"/>`;
+    const inp=row.querySelector('input');
+    inp.addEventListener('input',()=>{let n=parseFloat(inp.value);if(isNaN(n))n=0;n=Math.max(0,Math.min(10,n));state.scores[s.id]=n;row.classList.toggle('crit',n<4);renderWheelInto({spokes:'previewSpokes',poly:'previewPoly',dots:'previewDots',labels:'previewLabels'},state.scores);saveState();});
+    wrap.appendChild(row);
+  });
+  renderWheelInto({spokes:'previewSpokes',poly:'previewPoly',dots:'previewDots',labels:'previewLabels'},state.scores);
+}
+
+const uploadZone=$('#uploadZone'),uploadInput=$('#uploadInput'),uploadStatus=$('#uploadStatus');
+uploadInput.addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;await analyzeUploadedImage(f);e.target.value='';});
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag-over');});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop',async e=>{e.preventDefault();uploadZone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))await analyzeUploadedImage(f);});
+
+function setUploadStatus(type,text){uploadStatus.className='upload-status'+(type?' '+type:'');uploadStatus.textContent=text;}
+
+async function analyzeUploadedImage(file){
+  if(!CONFIG.apiKey){setUploadStatus('err','Ключ не настроен');return;}
+  setUploadStatus('analyzing','Анализирую');
+  try{
+    const base64=await fileToBase64(file);
+    const payload={
+      model:CONFIG.visionModel,
+      messages:[{role:'user',content:[
+        {type:'image_url',image_url:{url:`data:${file.type};base64,${base64}`}},
+        {type:'text',text:'Это результат диагностики "Колесо баланса" БЧДТ. Найди оценки восьми сфер (0-10). Сферы: Здоровье, Деньги, Реализация, Отношения, Состояние, Дисциплина, Среда, Отдых. Ответь ТОЛЬКО JSON без пояснений и без markdown: {"health":X,"money":X,"career":X,"relations":X,"state":X,"discipline":X,"env":X,"rest":X}'}
+      ]}],
+      max_tokens:200
+    };
+    const res=await fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+CONFIG.apiKey},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    const text=(data.choices?.[0]?.message?.content||'').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(text);
+    const valid={health:1,money:1,career:1,relations:1,state:1,discipline:1,env:1,rest:1};
+    let count=0;
+    for(const[k,v]of Object.entries(parsed)){if(valid[k]){state.scores[k]=Math.max(0,Math.min(10,parseFloat(v)||0));count++;}}
+    saveState();renderWheelInput();setUploadStatus('',`✓ Считано ${count} из 8`);
+    setTimeout(()=>setUploadStatus('',''),3000);
+  }catch(err){setUploadStatus('err','Не удалось считать');console.error(err);}
+}
+
+function renderCardsInput(){
+  const grid=$('#cardsGrid');grid.innerHTML='';
+  const ordered=[...SPHERES].sort((a,b)=>(state.scores[a.id]||0)-(state.scores[b.id]||0));
+  ordered.forEach((s,i)=>{
+    const score=state.scores[s.id]||0,card=state.cards[s.id]||{name:'',impression:''};
+    const block=document.createElement('div');block.className='card-block';
+    block.innerHTML=`<div class="lhs"><div class="ix">№ ${String(i+1).padStart(2,'0')}</div><div class="sphere-name">${s.name}</div><div class="score${score<4?' crit':''}">${fmtNum(score)} / 10</div></div><div class="rhs"><input class="field-input" type="text" placeholder="Карта (если была)" data-field="name" value="${escapeHtml(card.name)}"/><div class="field-label">Карта</div><textarea class="field-input field-textarea" rows="2" placeholder="Что сказала карта (одной фразой)" data-field="impression">${escapeHtml(card.impression)}</textarea><div class="field-label">Послание</div></div>`;
+    block.querySelectorAll('[data-field]').forEach(inp=>{
+      if(inp.tagName==='TEXTAREA'){const grow=()=>{inp.style.height='auto';inp.style.height=inp.scrollHeight+'px';};requestAnimationFrame(grow);inp.addEventListener('input',grow);}
+      inp.addEventListener('input',()=>{state.cards[s.id]=state.cards[s.id]||{name:'',impression:''};state.cards[s.id][inp.dataset.field]=inp.value;saveState();});
+    });
+    grid.appendChild(block);
+  });
+}
+
+function buildContextMessage(){
+  const lines=['Колесо:'];
+  SPHERES.forEach(s=>lines.push(`  ${s.name} — ${fmtNum(state.scores[s.id]||0)}/10`));
+  const fc=SPHERES.map(s=>({s,c:state.cards[s.id]})).filter(x=>x.c&&(x.c.name||x.c.impression));
+  if(fc.length){lines.push('');lines.push('Карты:');fc.forEach(({s,c})=>{const parts=[c.name,c.impression].filter(Boolean).join(' — ');lines.push(`  ${s.name}: ${parts}`);});}
+  lines.push('');lines.push('Готова.');return lines.join('\n');
+}
+
+function renderAsidePanel(){
+  renderWheelInto({spokes:'asideSpokes',poly:'asidePoly',dots:'asideDots',labels:'asideLabels'},state.scores);
+  const list=$('#asideCards');list.innerHTML='';
+  const filled=SPHERES.filter(s=>{const c=state.cards[s.id];return c&&(c.name||c.impression);});
+  if(!filled.length){list.innerHTML='<div style="font-size:12px;color:var(--paper-faint);font-style:italic">Карты не заполнены</div>';return;}
+  filled.forEach(s=>{const c=state.cards[s.id];const pill=document.createElement('div');pill.className='card-pill';pill.innerHTML=`<div class="sphere">${s.name}</div><div class="name">${escapeHtml(c.name||c.impression)}</div>`;list.appendChild(pill);});
+}
+
+function renderMessages(){
+  const wrap=$('#messages');wrap.innerHTML='';
+  state.messages.forEach((m,ix)=>{
+    if(ix===0&&m.role==='user')return;
+    const div=document.createElement('div');div.className=`msg ${m.role}`;
+    if(m.role==='assistant')div.innerHTML=`<span class="who">Голос</span>${escapeHtml(m.content).replace(/\n/g,'<br>')}`;
+    else div.textContent=m.content;
+    wrap.appendChild(div);
+  });
+  wrap.scrollTop=wrap.scrollHeight;
+}
+
+function showThinking(on){
+  const wrap=$('#messages');let el=$('#thinkingEl');
+  if(on){if(!el){el=document.createElement('div');el.id='thinkingEl';el.className='thinking';el.innerHTML='<div class="pulse"></div><span>Слушает</span>';wrap.appendChild(el);}wrap.scrollTop=wrap.scrollHeight;}
+  else if(el)el.remove();
+}
+
+function showSystemMessage(text){const wrap=$('#messages');const div=document.createElement('div');div.className='msg system';div.textContent=text;wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight;}
+
+let isWaitingAI=false;
+
+async function enterDialogue(){
+  renderAsidePanel();renderMessages();
+  if(state.messages.length===0){
+    if(!CONFIG.apiKey){showSystemMessage('Помощник ещё не подключён. Сайт в процессе настройки.');return;}
+    state.messages.push({role:'user',content:buildContextMessage()});saveState();
+    await requestAIReply();
+  }
+  setTimeout(()=>$('#msgInput')?.focus(),100);
+}
+
+async function requestAIReply(){
+  if(isWaitingAI)return;isWaitingAI=true;showThinking(true);$('#sendBtn').disabled=true;
+  try{
+    const reply=await callAI(state.messages);showThinking(false);
+    const im=reply.match(/<intent>([\s\S]+?)<\/intent>/i);
+    if(im){
+      state.intention=im[1].trim();
+      const cleaned=reply.replace(/<intent>[\s\S]+?<\/intent>/gi,'').trim();
+      if(cleaned){state.messages.push({role:'assistant',content:cleaned});renderMessages();}
+      saveState();setTimeout(()=>showScreen('final'),1400);
+    }else{state.messages.push({role:'assistant',content:reply});renderMessages();saveState();}
+  }catch(err){showThinking(false);showSystemMessage('Помощник не ответил: '+(err.message||'ошибка'));}
+  finally{isWaitingAI=false;$('#sendBtn').disabled=false;}
+}
+
+async function callAI(messages){
+  if(!CONFIG.apiKey)throw new Error('нет API-ключа');
+  const res=await fetch(CONFIG.endpoint,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+CONFIG.apiKey},
+    body:JSON.stringify({model:CONFIG.chatModel,messages:[{role:'system',content:CONFIG.systemPrompt},...messages],temperature:CONFIG.temperature,max_tokens:CONFIG.maxTokens})
+  });
+  if(!res.ok){let e=await res.text();try{const j=JSON.parse(e);e=j.error?.message||j.message||e;}catch(ex){}throw new Error(`HTTP ${res.status}: ${e.slice(0,200)}`);}
+  const data=await res.json();return data.choices?.[0]?.message?.content||'';
+}
+
+$('#sendBtn').addEventListener('click',sendUserMessage);
+$('#msgInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendUserMessage();}});
+$('#msgInput').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px';});
+
+async function sendUserMessage(){
+  if(isWaitingAI)return;const inp=$('#msgInput');const text=inp.value.trim();if(!text)return;
+  state.messages.push({role:'user',content:text});inp.value='';inp.style.height='auto';
+  renderMessages();saveState();await requestAIReply();
+}
+
+function renderFinal(){
+  $('#intentionText').textContent=state.intention||'—';
+  $('#finalDate').textContent=todayStr();
+  renderWheelInto({spokes:'finalSpokes',poly:'finalPoly',dots:'finalDots'},state.scores);
+}
+
+$('#copyIntentionBtn').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(state.intention||'');$('#copyIntentionBtn').textContent='Скопировано';setTimeout(()=>$('#copyIntentionBtn').textContent='Скопировать текст',1800);}catch(e){}
+});
+
+$('#downloadBtn').addEventListener('click',()=>{
+  const W=1080,H=1350,intention=state.intention||'',date=todayStr();
+  const words=intention.split(/\s+/);const maxCPL=24;const lines=[];let cur='';
+  words.forEach(w=>{if((cur+' '+w).trim().length>maxCPL){lines.push(cur);cur=w;}else{cur=(cur+' '+w).trim();}});if(cur)lines.push(cur);
+  const wheelCx=W/2,wheelCy=H-360,scale=10;
+  const points=SPHERES.map(s=>{const sc=state.scores[s.id]||0;const rad=s.angle*Math.PI/180;return[wheelCx+Math.cos(rad)*sc*scale,wheelCy+Math.sin(rad)*sc*scale];});
+  const polyPts=points.map(p=>p.join(',')).join(' ');
+  const fz=54,sy=460;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><radialGradient id="bg" cx="50%" cy="15%" r="75%"><stop offset="0%" stop-color="#f0e8d0"/><stop offset="100%" stop-color="#faf8f3"/></radialGradient></defs><rect width="${W}" height="${H}" fill="url(#bg)"/><rect x="40" y="40" width="${W-80}" height="${H-80}" fill="none" stroke="#ddd0b8" stroke-width="1"/><g stroke="#c9a04a" fill="none" stroke-width="1.2"><path d="M40,70 L40,40 L70,40"/><path d="${W-70},40 L${W-40},40 L${W-40},70"/><path d="M40,${H-70} L40,${H-40} L70,${H-40}"/><path d="M${W-70},${H-40} L${W-40},${H-40} L${W-40},${H-70}"/></g><text x="${W/2}" y="270" font-family="JetBrains Mono,monospace" font-size="20" letter-spacing="7" fill="#a07828" text-anchor="middle">— ТВОЁ НАМЕРЕНИЕ —</text>${lines.map((ln,i)=>`<text x="${W/2}" y="${sy+i*fz*1.22}" font-family="Bodoni Moda,Times New Roman,serif" font-style="italic" font-size="${fz}" fill="#1c1712" text-anchor="middle">${escapeHtml(ln)}</text>`).join('')}<circle cx="${wheelCx}" cy="${wheelCy}" r="${10*scale}" fill="none" stroke="#ddd0b8" stroke-width="1" stroke-dasharray="3 5"/>${SPHERES.map(s=>{const rad=s.angle*Math.PI/180;const x=wheelCx+Math.cos(rad)*10*scale,y=wheelCy+Math.sin(rad)*10*scale;return`<line x1="${wheelCx}" y1="${wheelCy}" x2="${x}" y2="${y}" stroke="#ddd0b8" stroke-width=".8" stroke-dasharray="2 3"/>`;}).join('')}<polygon points="${polyPts}" fill="rgba(201,160,74,.2)" stroke="#c9a04a" stroke-width="2"/>${points.map((p,i)=>{const sc=state.scores[SPHERES[i].id]||0;return`<circle cx="${p[0]}" cy="${p[1]}" r="${sc<4?5:4}" fill="${sc<4?'#8b2020':'#7a5c14'}"/>`;}).join('')}<circle cx="${wheelCx}" cy="${wheelCy}" r="4" fill="#c9a04a"/><line x1="240" y1="${H-155}" x2="${W-240}" y2="${H-155}" stroke="#ddd0b8" stroke-width="1"/><text x="240" y="${H-118}" font-family="JetBrains Mono,monospace" font-size="18" letter-spacing="5" fill="#b8a98c" text-anchor="start">${date}</text><text x="${W-240}" y="${H-118}" font-family="JetBrains Mono,monospace" font-size="18" letter-spacing="5" fill="#b8a98c" text-anchor="end">БЧДТ</text></svg>`;
+  const blob=new Blob([svg],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),img=new Image();
+  img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;canvas.getContext('2d').drawImage(img,0,0,W,H);URL.revokeObjectURL(url);canvas.toBlob(pb=>{const a=document.createElement('a');a.download=`БЧДТ-намерение-${date}.png`;a.href=URL.createObjectURL(pb);document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);},'image/png');};
+  img.onerror=()=>{const a=document.createElement('a');a.download=`БЧДТ-намерение-${date}.svg`;a.href=url;document.body.appendChild(a);a.click();document.body.removeChild(a);};
+  img.src=url;
+});
+
+$('#beginBtn').addEventListener('click',()=>showScreen('wheel-input'));
+$('#backToCoverBtn').addEventListener('click',()=>showScreen('cover'));
+$('#toCardsBtn').addEventListener('click',()=>showScreen('cards-input'));
+$('#backToWheelBtn').addEventListener('click',()=>showScreen('wheel-input'));
+$('#toDialogueBtn').addEventListener('click',()=>showScreen('dialogue'));
+$('#backToDialogueBtn').addEventListener('click',()=>showScreen('dialogue'));
+$('#resetBtn').addEventListener('click',()=>{if(!confirm('Стереть все ответы и начать заново?'))return;state=makeDefaultState();saveState();showScreen('cover');});
+
+loadFromStorage();
+showScreen(state.screen||'cover');
+</script>
+</body>
+</html>
